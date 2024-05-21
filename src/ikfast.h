@@ -322,6 +322,10 @@ IKFAST_API int GetIkType();
 /// \brief a hash of all the chain values used for double checking that the correct IK is used.
 IKFAST_API const char* GetKinematicsHash();
 
+IKFAST_API void ComputeFkC(int argc, char** argv);
+
+IKFAST_API int ComputeIkC(int argc, char** argv);
+
 #ifdef IKFAST_NAMESPACE
 }
 #endif
