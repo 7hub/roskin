@@ -34,6 +34,7 @@
 #include <list>
 #include <stdexcept>
 
+
 #ifndef IKFAST_HEADER_COMMON
 #define IKFAST_HEADER_COMMON
 
@@ -320,6 +321,8 @@ IKFAST_API int GetIkType();
 
 /// \brief a hash of all the chain values used for double checking that the correct IK is used.
 IKFAST_API const char* GetKinematicsHash();
+
+IKFAST_API void ComputeFk(int argc, char** argv);
 
 #ifdef IKFAST_NAMESPACE
 }

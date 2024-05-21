@@ -12,14 +12,14 @@
 /// See the License for the specific language governing permissions and
 /// limitations under the License.
 ///
-/// ikfast version 0x1000004a generated on 2024-05-17 04:33:46.232049
+/// ikfast version 0x1000004a generated on 2024-05-18 03:34:52.302142
 /// Generated using solver transform6d
 /// To compile with gcc:
 ///     gcc -lstdc++ ik.cpp
 /// To compile without any main function as a shared object (might need -llapack):
 ///     gcc -fPIC -lstdc++ -DIKFAST_NO_MAIN -DIKFAST_CLIBRARY -shared -Wl,-soname,libik.so -o libik.so ik.cpp
 #define IKFAST_HAS_LIBRARY
-#include "ikfast.h" // found inside share/openrave-X.Y/python/ikfast.h
+ #include "ikfast.h" // found inside share/openrave-X.Y/python/ikfast.h
 using namespace ikfast;
 
 // check if the included ikfast version matches what this file was compiled with
@@ -10733,6 +10733,10 @@ IKFAST_API const char* GetKinematicsHash() { return "<robot:GenericRobot - staub
 
 IKFAST_API const char* GetIkFastVersion() { return "0x1000004a"; }
 
+IKFAST_API void ComputeFk(int argc,char** argv){
+    fk(argc,argv);
+}
+
 #ifdef IKFAST_NAMESPACE
 } // end namespace
 #endif
@@ -10742,28 +10746,18 @@ IKFAST_API const char* GetIkFastVersion() { return "0x1000004a"; }
 #include <stdlib.h>
 #ifdef IKFAST_NAMESPACE
 using namespace IKFAST_NAMESPACE;
-using namespace std;
 #endif
-#define DEG2RAD (IkReal)0.0174532925199
-int fk(int argc, char** argv){
-    printf("%s,%s:j=[%s,%s,%s,%s,%s,%s]\n",argv[0],argv[1],argv[2],argv[3],argv[4],argv[5],argv[6],argv[7]);
-    IkReal j[6],eetrans[3],eerot[9];
-    j[0] = atof(argv[2])*DEG2RAD;
-    j[1] = atof(argv[3])*DEG2RAD;
-    j[2] = atof(argv[4])*DEG2RAD;
-    j[3] = atof(argv[5])*DEG2RAD;
-    j[4] = atof(argv[6])*DEG2RAD;
-    j[5] = atof(argv[7])*DEG2RAD;
-    
-    ComputeFk(j,eetrans,eerot);
-    printf("%.3f\t%.3f\t%.3f\t%.3f\n",eerot[0],eerot[1],eerot[2],eetrans[0]);
-    printf("%.3f\t%.3f\t%.3f\t%.3f\n",eerot[3],eerot[4],eerot[5],eetrans[1]);
-    printf("%.3f\t%.3f\t%.3f\t%.3f\n",eerot[6],eerot[7],eerot[8],eetrans[2]);
-    printf("%.3f\t%.3f\t%.3f\t%.3f\n",0.,0.,0.,1.);
-    
-    
-    
+
+#define DEG2RAD 0.01745329251994329576923690768489;
+
+void printHM(IkReal *eerot,IkReal *eetrans){
+    printf("%8.3f %8.3f %8.3f %8.6f\n",eerot[0],eerot[1],eerot[2],eetrans[0]);
+    printf("%8.3f %8.3f %8.3f %8.6f\n",eerot[3],eerot[4],eerot[5],eetrans[1]);
+    printf("%8.3f %8.3f %8.3f %8.6f\n",eerot[6],eerot[7],eerot[8],eetrans[2]);
+    printf("%8.3f %8.3f %8.3f %8.6f\n",0.0f,0.0f,0.0f,1.0f);
+
 }
+
 int ik(int argc, char** argv)
 {
     if( argc != 12+GetNumFreeParameters()+1 ) {
@@ -10771,7 +10765,7 @@ int ik(int argc, char** argv)
                "Returns the ik solutions given the transformation of the end effector specified by\n"
                "a 3x3 rotation R (rXX), and a 3x1 translation (tX).\n"
                "There are %d free parameters that have to be specified.\n\n",GetNumFreeParameters());
-        return 1;
+        return -1;
     }
 
     IkSolutionList<IkReal> solutions;
@@ -10780,6 +10774,12 @@ int ik(int argc, char** argv)
     eerot[0] = atof(argv[1]); eerot[1] = atof(argv[2]); eerot[2] = atof(argv[3]); eetrans[0] = atof(argv[4]);
     eerot[3] = atof(argv[5]); eerot[4] = atof(argv[6]); eerot[5] = atof(argv[7]); eetrans[1] = atof(argv[8]);
     eerot[6] = atof(argv[9]); eerot[7] = atof(argv[10]); eerot[8] = atof(argv[11]); eetrans[2] = atof(argv[12]);
+    
+
+    printf("%s,%s,%s\n",argv[0],argv[1],argv[2]);
+    printf("Ik HM:\n");
+    printHM(eerot,eetrans);
+
     for(std::size_t i = 0; i < vfree.size(); ++i)
         vfree[i] = atof(argv[13+i]);
     bool bSuccess = ComputeIk(eetrans, eerot, vfree.size() > 0 ? &vfree[0] : NULL, solutions);
@@ -10803,32 +10803,55 @@ int ik(int argc, char** argv)
     return 0;
 }
 
-int main(int argc, char** argv){
-    int ret = 0;
-    if (argc>=2 &&std::string(argv[1])=="fk"){
-        ret= fk(argc,argv);
+int fk(int argc,char** argv){
 
+    IkReal j[6],eerot[9],eetrans[3];
+    j[0] = atof(argv[1])*DEG2RAD;
+    j[1] = atof(argv[2])*DEG2RAD;
+    j[2] = atof(argv[3])*DEG2RAD;
+    j[3] = atof(argv[4])*DEG2RAD;
+    j[4] = atof(argv[5])*DEG2RAD;
+    j[5] = atof(argv[6])*DEG2RAD;
+    for (int i = 0; i < 9; i++)
+    {
+        eerot[i]=0.0f;
+    }
+    eetrans[0]=0.0f;
+    eetrans[1]=0.0f;
+    eetrans[2]=0.0f;
+
+    ComputeFk(j,eetrans,eerot);
+    printHM(eerot,eetrans);
+
+}
+
+void trimArgs(int argc,char** argin, char** argout){
+    
+    for (int i = 0; i < argc; i++){
+        argout[i]=argin[i+1];
+        // printf("%s,%s\n",argout[i],argin[i+1]);
+    }
+}
+
+int main(int argc,char** argv){
+
+    if (argc>=2 && std::string(argv[1])=="fk"){
+        --argc;
+        char* arg[argc];
+        trimArgs(argc,argv,arg);
+        printf("%s,%s,%s,%s,%s,%s,%s\n",arg[0],arg[1],arg[2],arg[3],arg[4],arg[5],arg[6]);
+        fk(argc,arg);
     }
 
     if (argc>=2 && std::string(argv[1])=="ik"){
-        char *a[argc];
-        a[0]=argv[1];
-        a[1]=argv[2];
-        a[2]=argv[3];
-        a[3]=argv[4];
-        a[4]=argv[5];
-        a[5]=argv[6];
-        a[6]=argv[7];
-        a[7]=argv[8];
-        a[8]=argv[9];
-        a[9]=argv[10];
-        a[10]=argv[11];
-        a[11]=argv[12];
-        a[12]=argv[13];
-
-        printf("%i,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n",argc,a[0],a[1],a[2],a[3],a[4],a[5],a[6],a[7],a[8],a[9],a[10],a[11],a[12]);
-        ret =  ik(--argc,a);
+        if (argc>=14){
+            --argc;
+            char* arg[argc];
+            trimArgs(argc,argv,arg);
+            
+            ik(argc,arg);
+        }
     }
-    return ret;
+
 }
 #endif

@@ -34,6 +34,7 @@
 #include <list>
 #include <stdexcept>
 
+
 #ifndef IKFAST_HEADER_COMMON
 #define IKFAST_HEADER_COMMON
 
