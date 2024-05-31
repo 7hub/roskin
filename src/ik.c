@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-jypedef double IkReal;
+typedef double IkReal;
 typedef struct IkSingleDOFSolutionBase {
   int freeind;
   double foffset;
