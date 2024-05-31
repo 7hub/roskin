@@ -45,14 +45,14 @@ void T2pose(double T[4][4], double pose[6], EULER euler = EULER::XYZ) {
 
   // Convert the rotation matrix to Euler angles
   switch (euler) {
-  case EULER::ZYX:
-    rm2zyx(R, pose + 3);
-    break;
-  case EULER::XYZ:
-  default:
-    /* code */
-    rm2xyz(R, pose + 3);
-    break;
+    case EULER::ZYX:
+      rm2zyx(R, pose + 3);
+      break;
+    case EULER::XYZ:
+    default:
+      /* code */
+      rm2xyz(R, pose + 3);
+      break;
   }
 }
 // Rotation matrix to Homogenous Transformation
@@ -165,25 +165,25 @@ void rm2quat(double R[3][3], double quat[4]) {
 
   // Calculate the quaternion elements from the rotation matrix
   if (trace > 0) {
-    double S = sqrt(trace + 1.0) * 2; // S=4*qw
+    double S = sqrt(trace + 1.0) * 2;  // S=4*qw
     quat[0] = 0.25 * S;
     quat[1] = (R[2][1] - R[1][2]) / S;
     quat[2] = (R[0][2] - R[2][0]) / S;
     quat[3] = (R[1][0] - R[0][1]) / S;
   } else if ((R[0][0] > R[1][1]) & (R[0][0] > R[2][2])) {
-    double S = sqrt(1.0 + R[0][0] - R[1][1] - R[2][2]) * 2; // S=4*qx
+    double S = sqrt(1.0 + R[0][0] - R[1][1] - R[2][2]) * 2;  // S=4*qx
     quat[0] = (R[2][1] - R[1][2]) / S;
     quat[1] = 0.25 * S;
     quat[2] = (R[0][1] + R[1][0]) / S;
     quat[3] = (R[0][2] + R[2][0]) / S;
   } else if (R[1][1] > R[2][2]) {
-    double S = sqrt(1.0 + R[1][1] - R[0][0] - R[2][2]) * 2; // S=4*qy
+    double S = sqrt(1.0 + R[1][1] - R[0][0] - R[2][2]) * 2;  // S=4*qy
     quat[0] = (R[0][2] - R[2][0]) / S;
     quat[1] = (R[0][1] + R[1][0]) / S;
     quat[2] = 0.25 * S;
     quat[3] = (R[1][2] + R[2][1]) / S;
   } else {
-    double S = sqrt(1.0 + R[2][2] - R[0][0] - R[1][1]) * 2; // S=4*qz
+    double S = sqrt(1.0 + R[2][2] - R[0][0] - R[1][1]) * 2;  // S=4*qz
     quat[0] = (R[1][0] - R[0][1]) / S;
     quat[1] = (R[0][2] + R[2][0]) / S;
     quat[2] = (R[1][2] + R[2][1]) / S;

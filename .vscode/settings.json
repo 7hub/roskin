@@ -1,6 +1,8 @@
 {
     "files.associations": {
         "*.log": "log",
-        "vector": "cpp"
+        "*.pmh": "c",
+        "vector": "cpp",
+        "stddef.h": "c"
     }
 }
