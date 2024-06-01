@@ -3,6 +3,7 @@
         "*.log": "log",
         "*.pmh": "c",
         "vector": "cpp",
-        "stddef.h": "c"
+        "stddef.h": "c",
+        "limits": "c"
     }
 }

@@ -1,4 +1,5 @@
-FROM osrf/ros:kinetic-desktop-full-xenial
+FROM or_kinetic:openrave
+# FROM osrf/ros:kinetic-desktop-full-xenial
 # Update ROS keys (https://discourse.ros.org/t/new-gpg-keys-deployed-for-packages-ros-org/9454, https://github.com/osrf/docker_images/issues/697)
 
 RUN mv /etc/apt/sources.list /etc/apt/sources_backup.list && \
